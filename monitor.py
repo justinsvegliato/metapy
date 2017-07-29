@@ -43,10 +43,10 @@ def myopic_monitor(f, states, start_state, profile_1, profile_3, config):
         quality_estimate = heuristic_cost / memory['cost']
 
         mevc = computation.get_mevc(quality_estimate, time_class, profile_1, profile_3, config)
-        print(mevc)
+        print("MEVC = %f" % mevc)
         if mevc <= 0:
             process.terminate()
-            print(quality_estimate, time_class)
+            print("Final Quality = %f" % quality_estimate)
             break
 
         time_class += 1

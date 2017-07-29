@@ -32,6 +32,4 @@ def get_mevc(quality_estimate, time, profile_1, profile_3, config):
         next_comprehensive_value = get_comprehensive_value(target_intrinsic_value, next_time_cost)
         next_expected_value += profile_1[origin_class][time][target_class] * next_comprehensive_value
 
-    print(current_expected_value)
-    print(next_expected_value)
     return next_expected_value - current_expected_value
