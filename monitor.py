@@ -4,55 +4,50 @@ from multiprocessing import Manager, Process
 
 import computation
 import utils
+import tsp
 
 SLEEP_INTERVAL = 0.5
 
 
-def recorder(f, states, start_state, iterations):    
-    start_time = time.time()
-
+def recorder(f, states, start_state, iterations):
     memory = Manager().dict()
     memory['cost'] = 0
-    memory['time'] = time.time()
 
     process = Process(target=f, args=(states, start_state, iterations, memory))
     process.start()
+
     time.sleep(SLEEP_INTERVAL)
 
-    checkpoints = []
+    costs = []
     while process.is_alive():
-        time_class = math.ceil((memory['time'] - start_time) / SLEEP_INTERVAL)
-        checkpoint = time_class, memory['cost']
-        checkpoints.append(checkpoint)
+        costs.append(memory['cost'])
         time.sleep(SLEEP_INTERVAL)
 
-    return checkpoints
+    return costs
 
 
-def myopic_monitor(f, profile_1, profile_3, config):
-    start_cost = 0
-    start_time = time.time()
+def myopic_monitor(f, states, start_state, profile_1, profile_3, config):
+    time_class = 0
 
     memory = Manager().dict()
-    memory['cost'] = start_cost
-    memory['time'] = start_time
+    memory['cost'] = 0
 
     process = Process(target=f, args=(states, start_state, 1000, memory))
     process.start()
 
     time.sleep(SLEEP_INTERVAL)
 
-    while process.is_alive():
-        quality_class = utils.digitize(heuristic / memory['cost'], config['solution_quality_class_bounds'])
-        time_class = math.floor((memory['time'] - start_time) / SLEEP_INTERVAL)
+    heuristic_cost = tsp.get_mst_distance(start_state, states)
 
-        mevc = computation.get_mevc(quality_class, time_class, profile_1, profile_3, config)
+    while process.is_alive():
+        quality_estimate = heuristic_cost / memory['cost']
+
+        mevc = computation.get_mevc(quality_estimate, time_class, profile_1, profile_3, config)
+        print(mevc)
         if mevc <= 0:
             process.terminate()
+            print(quality_estimate, time_class)
             break
 
+        time_class += 1
         time.sleep(SLEEP_INTERVAL)
-
-
-if __name__ == "__main__":
-    main()

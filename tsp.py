@@ -1,3 +1,4 @@
+import itertools
 import random
 import re
 import sys
@@ -50,6 +51,37 @@ def get_tour_distance(tour):
         distance += get_distance(tour[i], tour[i + 1])
 
     return distance
+
+
+def k_opt_solve(states, start_state, iterations, memory):
+    tour = get_initial_random_tour(states, start_state)
+    cities = get_swappable_cities(tour)
+    distance = get_tour_distance(tour)
+
+    for _ in range(iterations):
+        has_changed = False
+
+        best_tour = tour
+        best_distance = distance
+        for first_key, second_key in itertools.combinations(cities, 2):
+            current_tour = get_mutated_tour(tour, first_key, second_key)
+            current_distance = get_tour_distance(current_tour)
+
+            if current_distance < best_distance:
+                best_tour = current_tour
+                best_distance = current_distance
+
+                has_changed = True
+
+        tour = best_tour
+        distance = best_distance
+
+        memory['cost'] = distance
+
+        if not has_changed:
+            break
+
+    return tour
 
 
 def get_graph(cities):

@@ -1,7 +1,6 @@
 import os
 import monitor
 import tsp
-import tsp_solver
 import json
 
 
@@ -11,10 +10,11 @@ def get_optimal_costs(file_path):
         return {entry[0]: float(entry[1]) for entry in entries}
 
 
-def get_performances(instances_directory, index_file_path):
+def get_simulations(instances_directory, index_file_path):
     optimal_costs = get_optimal_costs(index_file_path)
 
     performances = {}
+
     for file in os.listdir(instances_directory):
         if file.endswith(".tsp"):
             print("Handling %s" % file)
@@ -23,17 +23,17 @@ def get_performances(instances_directory, index_file_path):
             file_path = os.path.join(instances_directory, file)
 
             states, start_state = tsp.load_instance(file_path)
-            checkpoints = monitor.recorder(tsp_solver.k_opt_solve, states, start_state, 1000)
+            costs = monitor.recorder(tsp.k_opt_solve, states, start_state, 1000)
+
             optimal_cost = optimal_costs[instance]
-            performances[instance] = [(checkpoint[0], optimal_cost / checkpoint[1]) for checkpoint in checkpoints]
-            break
+            qualities = [optimal_cost / cost for cost in costs]
+
+            heuristic_cost = tsp.get_mst_distance(start_state, states)
+            estimated_qualities = [heuristic_cost / cost for cost in costs]
+
+            performances[instance] = {
+                "qualities": qualities,
+                "estimated_qualities": estimated_qualities 
+            }
 
     return performances
-
-def main():
-    performances = get_performances("problems/50-tsp", "problems/50-tsp/index.csv")
-    print(json.dumps(performances))
-
-
-if __name__ == "__main__":
-    main()

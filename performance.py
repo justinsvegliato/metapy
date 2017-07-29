@@ -22,13 +22,13 @@ def get_normalized_performance_profile(profile, classes, steps):
     return profile
 
 
-def get_dynamic_performance_profile(instances, config, selector):
-    classes = config['solution_quality_classes']
-    bounds = config['solution_quality_class_bounds']
-    count = config['solution_quality_class_count']
+def get_dynamic_performance_profile(simulations, config, selector):
+    classes = config['quality_classes']
+    bounds = config['quality_class_bounds']
+    count = config['quality_class_count']
 
-    groups = utils.get_groups(instances, 'solution_qualities')
-    estimated_groups = utils.get_groups(instances, 'estimated_solution_qualities')
+    groups = utils.get_groups(simulations, 'qualities')
+    estimated_groups = utils.get_groups(simulations, 'estimated_qualities')
 
     length = utils.get_max_list_length(groups)
     steps = range(length)
@@ -48,7 +48,6 @@ def get_dynamic_performance_profile(instances, config, selector):
                 
                 origin_class = utils.digitize(origin_quality, bounds)
                 target_class = utils.digitize(target_quality, bounds)
-
                 profile[origin_class][step][target_class] += 1
 
 
