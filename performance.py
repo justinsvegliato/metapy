@@ -7,14 +7,6 @@ TYPE_2 = lambda qualities, estimated_qualities, step: (estimated_qualities[step]
 TYPE_3 = lambda qualities, estimated_qualities, step: (estimated_qualities[step], qualities[step])
 
 
-def get_standard_solution_qualities(costs, optimal_cost):
-    return [1 - ((cost - optimal_cost) / optimal_cost) for cost in costs]
-
-
-def get_naive_solution_qualities(costs, optimal_cost):
-    return [optimal_cost / cost for cost in costs]
-
-
 def get_initial_dynamic_performance_profile(classes, count, steps):
     return {origin_class: {step: count * [0] for step in steps} for origin_class in classes}
 
