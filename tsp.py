@@ -71,12 +71,13 @@ def k_opt_solve(states, start_state, iterations, memory):
                 best_tour = current_tour
                 best_distance = current_distance
 
+                memory['solution'] = current_tour
+                memory['cost'] = best_distance                
+
                 has_changed = True
 
         tour = best_tour
         distance = best_distance
-
-        memory['cost'] = distance
 
         if not has_changed:
             break
@@ -157,7 +158,7 @@ def get_instance(size, start_position, end_position, minimum_distance):
     return cities
 
 
-def save_instance(name, comment, cities, use_template=False):
+def save_instance(name, comment, cities):
     size = len(cities)
 
     node_coord_section = ''
@@ -166,7 +167,7 @@ def save_instance(name, comment, cities, use_template=False):
         delimiter = DELIMITER if i < size - 1 else ''
         node_coord_section += CITY_TEMPLATE % (i + 1, x, y, delimiter)
 
-    instance = FILE_TEMPLATE % (name, comment, size, node_coord_section) if use_template else node_coord_section
+    instance = FILE_TEMPLATE % (name, comment, size, node_coord_section)
 
     f = open(name, 'w')
     f.write(instance)

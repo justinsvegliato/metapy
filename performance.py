@@ -7,6 +7,33 @@ TYPE_2 = lambda qualities, estimated_qualities, step: (estimated_qualities[step]
 TYPE_3 = lambda qualities, estimated_qualities, step: (estimated_qualities[step], qualities[step])
 
 
+def get_initial_probabilistic_performance_profile(count, steps):
+    return {step: count * [0] for step in steps}
+
+
+def get_probabilistic_performance_profile(instances, config):
+    groups = utils.get_groups(instances, 'qualities')
+
+    length = utils.get_max_list_length(groups)
+    steps = range(length)
+
+    trimmed_groups = utils.get_trimmed_lists(groups, length)
+
+    profile = get_initial_probabilistic_performance_profile(config['quality_class_count'], steps)
+
+    for step in steps:
+        for qualities in trimmed_groups:
+            target_quality = qualities[step]
+            target_class = utils.digitize(target_quality, config['quality_class_bounds'])
+            profile[step][target_class] += 1
+
+        normalizer = sum(profile[step])
+        for target_class in config['quality_classes']:
+            profile[step][target_class] /= normalizer
+
+    return profile
+
+
 def get_initial_dynamic_performance_profile(classes, count, steps):
     return {origin_class: {step: count * [0] for step in steps} for origin_class in classes}
 

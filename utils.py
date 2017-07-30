@@ -55,7 +55,9 @@ def load(file_path):
         return json.load(file)
 
 
-def save(file_path, data):
+def save(data, file_path):
     with open(file_path, 'w') as file:
         json.dump(data, file)
         
+def log(event):
+    print(json.dumps(event))

@@ -33,7 +33,7 @@ def get_simulations(instances_directory, index_file_path):
 
             performances[instance] = {
                 "qualities": qualities,
-                "estimated_qualities": estimated_qualities 
+                "estimated_qualities": estimated_qualities
             }
 
     return performances
