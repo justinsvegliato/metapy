@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 
 def digitize(item, bins):
@@ -62,3 +63,7 @@ def save(data, file_path):
         
 def log(event):
     print(json.dumps(event))
+
+
+def get_percent_error(accepted_value, approximate_value):
+    return np.absolute(accepted_value - approximate_value) / accepted_value * 100
