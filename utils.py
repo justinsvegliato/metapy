@@ -60,9 +60,6 @@ def load(file_path):
 def save(data, file_path):
     with open(file_path, "w") as file:
         json.dump(data, file)
-        
-def log(event):
-    print(json.dumps(event))
 
 
 def get_percent_error(accepted_value, approximate_value):

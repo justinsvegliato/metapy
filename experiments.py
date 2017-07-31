@@ -67,9 +67,10 @@ def experiment_1(simulations_file, instances_directory):
     profile_3 = performance.get_dynamic_performance_profile(simulations, CONFIG, performance.TYPE_3)
     profile_4 = performance.get_probabilistic_performance_profile(simulations, CONFIG)
 
-    nonmyopic_losses = []
-    myopic_losses = []
     fixed_losses = []
+    myopic_losses = []
+    nonmyopic_losses = []
+    projected_losses = []
 
     for file in os.listdir(instances_directory):
         if file.endswith(".tsp"):
@@ -89,22 +90,31 @@ def experiment_1(simulations_file, instances_directory):
             heuristic = tsp.get_mst_distance(start_state, states)
             quality_estimator = lambda cost: heuristic / cost
 
+            print("Fixed Monitor:")
             _, fixed_records = monitor.fixed_monitor(tsp.k_opt_solve, quality_estimator, profile_4, CONFIG, states, start_state, 1000)
-            _, myopic_records = monitor.myopic_monitor(tsp.k_opt_solve, quality_estimator, profile_1, profile_3, CONFIG,  states, start_state, 1000)
-            _, nonmyopic_records = monitor.nonmyopic_monitor(tsp.k_opt_solve, quality_estimator, profile_2, profile_3, CONFIG, states, start_state, 1000)
-
             fixed_comprehensive_value = computation.get_time_dependent_utility(fixed_records[-1]['q'], fixed_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
-            myopic_comprehensive_value = computation.get_time_dependent_utility(myopic_records[-1]['q'], myopic_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
-            nonmyopic_comprehensive_value = computation.get_time_dependent_utility(nonmyopic_records[-1]['q'], nonmyopic_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
-
-            nonmyopic_losses.append(utils.get_percent_error(optimal_comprehensive_value, nonmyopic_comprehensive_value))
-            myopic_losses.append(utils.get_percent_error(optimal_comprehensive_value, myopic_comprehensive_value))
             fixed_losses.append(utils.get_percent_error(optimal_comprehensive_value, fixed_comprehensive_value))
+
+            print("Myopic Monitor:")
+            _, myopic_records = monitor.myopic_monitor(tsp.k_opt_solve, quality_estimator, profile_1, profile_3, CONFIG,  states, start_state, 1000)
+            myopic_comprehensive_value = computation.get_time_dependent_utility(myopic_records[-1]['q'], myopic_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
+            myopic_losses.append(utils.get_percent_error(optimal_comprehensive_value, myopic_comprehensive_value))
+
+            print("Nonmyopic Monitor:")
+            _, nonmyopic_records = monitor.nonmyopic_monitor(tsp.k_opt_solve, quality_estimator, profile_2, profile_3, CONFIG, states, start_state, 1000)
+            nonmyopic_comprehensive_value = computation.get_time_dependent_utility(nonmyopic_records[-1]['q'], nonmyopic_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
+            nonmyopic_losses.append(utils.get_percent_error(optimal_comprehensive_value, nonmyopic_comprehensive_value))
+
+            print("Projected Monitor:")
+            _, projected_records = monitor.projected_monitor(tsp.k_opt_solve, quality_estimator, CONFIG, states, start_state, 1000)
+            projected_comprehensive_value = computation.get_time_dependent_utility(projected_records[-1]['q'], projected_records[-1]['t'], INTRINSIC_VALUE_MULTIPLIER, TIME_COST_MULTIPLIER)
+            projected_losses.append(utils.get_percent_error(optimal_comprehensive_value, projected_comprehensive_value))
         
 
-    print("Nonmyopic Monitoring Average Percent Error: %f%%" % np.average(nonmyopic_losses))
-    print("Myopic Monitoring Average Percent Error: %f%%" % np.average(myopic_losses))
     print("Fixed Time Allocation Average Percent Error: %f%%" % np.average(fixed_losses))
+    print("Myopic Monitoring Average Percent Error: %f%%" % np.average(myopic_losses))
+    print("Nonmyopic Monitoring Average Percent Error: %f%%" % np.average(nonmyopic_losses))
+    print("Projected Monitoring Average Percent Error: %f%%" % np.average(projected_losses))
 
 
 def main():

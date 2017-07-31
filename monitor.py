@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 import computation
 import tsp
 import utils
+import numpy as np
 
 SLEEP_INTERVAL = 0.5
 
@@ -49,7 +50,7 @@ def fixed_monitor(algorithm, quality_estimator, profile_4, config, *args):
         record = {"t": step, "q": quality}
         records.append(record)
 
-        utils.log(record)
+        print(record)
 
         if step == stopping_point:
             process.terminate()
@@ -80,7 +81,7 @@ def myopic_monitor(algorithm, quality_estimator, profile_1, profile_3, config, *
         record = {"t": step, "q": quality}
         records.append(record)
 
-        utils.log(record)
+        print(record)
 
         mevc = computation.get_mevc(quality, step, profile_1, profile_3, config)
         if mevc <= 0:
@@ -113,7 +114,7 @@ def nonmyopic_monitor(algorithm, quality_estimator, profile_2, profile_3, config
         record = {"t": step, "q": quality}
         records.append(record)
 
-        utils.log(record)
+        print(record)
 
         action = computation.get_optimal_action(quality, step, values, profile_2, profile_3, config)
         if action == computation.STOP_SYMBOL:
@@ -125,44 +126,46 @@ def nonmyopic_monitor(algorithm, quality_estimator, profile_2, profile_3, config
 
     return memory["solution"], records
 
-# def projected_monitor(algorithm, quality_estimator, config, *args):
-#     memory = Manager().dict()
-#     memory["solution"] = None
-#     memory["cost"] = 0
-#     args += (memory,)
+def projected_monitor(algorithm, quality_estimator, config, *args):
+    memory = Manager().dict()
+    memory["solution"] = None
+    memory["cost"] = 0
+    args += (memory,)
 
-#     model = lambda x, a, b, c: a * np.arctan(x + b) + c
-#     step = 0
-#     history = []
-#     records = []
+    model = lambda x, a, b, c: a * np.arctan(x + b) + c
+    step = 0
+    history = []
+    records = []
 
-#     process = Process(target=algorithm, args=args)
-#     process.start()
-#     time.sleep(SLEEP_INTERVAL)
+    process = Process(target=algorithm, args=args)
+    process.start()
+    time.sleep(SLEEP_INTERVAL)
 
-#     while process.is_alive():
-#         quality = quality_estimator(memory["cost"])
-#         history.append(quality)
+    while process.is_alive():
+        quality = quality_estimator(memory["cost"])
+        history.append(quality)
 
-#         record = {"t": step, "q": quality}
-#         records.append(record)
+        record = {"t": step, "q": quality}
+        records.append(record)
 
-#         utils.log(record)
+        print(record)
 
-#         steps = range(len(history))
-#         params, _ = curve_fit(model, steps, history)
-#         projection = model(steps, params[0], params[1], params[2])
+        if step >= 10:
+            try:
+                steps = range(len(history))
+                params, _ = curve_fit(model, steps, history)
+                projection = model(range(32), params[0], params[1], params[2])
 
-#         intrinsic_values = computation.get_intrinsic_value(projection, config['intrinsic_value_multiplier'])
-#         time_costs = computation.get_time_cost(steps, config['time_cost_multiplier'])
-#         comprehensive_values = computation.get_time_dependent_utility(intrinsic_values, time_costs)
-#         stopping_point = computation.get_optimal_stopping_point(comprehensive_values)
+                comprehensive_values = computation.get_time_dependent_utility(projection, range(32), config['intrinsic_value_multiplier'], config['time_cost_multiplier'])
+                stopping_point = computation.get_optimal_stopping_point(comprehensive_values)
 
-#         if stopping_point <= step:
-#             process.terminate()
-#             break
+                if stopping_point <= step:
+                    process.terminate()
+                    break
+            except (RuntimeError, TypeError):
+                pass
 
-#         step += 1
-#         time.sleep(SLEEP_INTERVAL)
+        step += 1
+        time.sleep(SLEEP_INTERVAL)
 
-#     return memory["solution"], records
+    return memory["solution"], records
