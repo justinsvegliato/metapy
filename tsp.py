@@ -7,7 +7,7 @@ import numpy as np
 
 import utils
 
-FILE_TEMPLATE = '''NAME : %s
+FILE_TEMPLATE = """NAME : %s
 COMMENT : %s
 TYPE : TSP
 DIMENSION: %d
@@ -15,11 +15,11 @@ EDGE_WEIGHT_TYPE : EUC_2D
 NODE_COORD_SECTION
 %s
 EOF
-'''
-CITY_TEMPLATE = '%d %i %i %s'
-COMMENT = 'No Comment'
-CITY_PATTERN = '\d+ (\d+) (\d+)'
-DELIMITER = '\n'
+"""
+CITY_TEMPLATE = "%d %i %i %s"
+COMMENT = "No Comment"
+CITY_PATTERN = "\d+ (\d+) (\d+)"
+DELIMITER = "\n"
 
 
 def get_initial_random_tour(states, start_state):
@@ -44,10 +44,10 @@ def get_distance(first_city, second_city):
 def get_tour_distance(tour):
     distance = 0
 
-    for i in range(len(tour)):
-        if i + 1 == len(tour):
-            break
-
+    limit = len(tour)
+    for i in range(limit):
+        if i + 1 == limit:
+            break        
         distance += get_distance(tour[i], tour[i + 1])
 
     return distance
@@ -71,8 +71,8 @@ def k_opt_solve(states, start_state, iterations, memory):
                 best_tour = current_tour
                 best_distance = current_distance
 
-                memory['solution'] = current_tour
-                memory['cost'] = best_distance                
+                memory["solution"] = current_tour
+                memory["cost"] = best_distance
 
                 has_changed = True
 
@@ -98,7 +98,7 @@ def get_graph(cities):
 
 
 def get_nearest_city_distance(start_city, cities):
-    nearest_distance = float('inf')
+    nearest_distance = float("inf")
 
     for city in cities:
         if start_city == city:
@@ -161,15 +161,15 @@ def get_instance(size, start_position, end_position, minimum_distance):
 def save_instance(name, comment, cities):
     size = len(cities)
 
-    node_coord_section = ''
+    node_coord_section = ""
     for i, city in enumerate(cities):
         x, y = city
-        delimiter = DELIMITER if i < size - 1 else ''
+        delimiter = DELIMITER if i < size - 1 else ""
         node_coord_section += CITY_TEMPLATE % (i + 1, x, y, delimiter)
 
     instance = FILE_TEMPLATE % (name, comment, size, node_coord_section)
 
-    f = open(name, 'w')
+    f = open(name, "w")
     f.write(instance)
     f.close()
 

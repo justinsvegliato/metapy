@@ -1,5 +1,6 @@
 import json
 
+
 def digitize(item, bins):
     for i, _ in enumerate(bins):
         if i + 1 < len(bins):
@@ -37,7 +38,7 @@ def get_trimmed_lists(groups, max_length):
 
 
 def pop(queue):
-    minimum_value = float('inf')
+    minimum_value = float("inf")
     minimum_key = None
 
     for key in queue:
@@ -56,7 +57,7 @@ def load(file_path):
 
 
 def save(data, file_path):
-    with open(file_path, 'w') as file:
+    with open(file_path, "w") as file:
         json.dump(data, file)
         
 def log(event):

@@ -13,16 +13,16 @@ states, start_state = tsp.load_instance("problems/50-tsp/instance-30.tsp")
 
 TIME_COST_MULTIPLIER = 0.1
 INTRINSIC_VALUE_MULTIPLIER = 200
-SOLUTION_QUALITY_CLASS_COUNT = 100
+SOLUTION_QUALITY_CLASS_COUNT = 5
 SOLUTION_QUALITY_CLASS_BOUNDS = np.linspace(0, 1, SOLUTION_QUALITY_CLASS_COUNT + 1)
 SOLUTION_QUALITY_CLASSES = range(SOLUTION_QUALITY_CLASS_COUNT)
 
 CONFIG = {
-    'time_cost_multiplier': TIME_COST_MULTIPLIER,
-    'intrinsic_value_multiplier': INTRINSIC_VALUE_MULTIPLIER,
-    'quality_classes': SOLUTION_QUALITY_CLASSES,
-    'quality_class_bounds': SOLUTION_QUALITY_CLASS_BOUNDS,
-    'quality_class_count': SOLUTION_QUALITY_CLASS_COUNT
+    "time_cost_multiplier": TIME_COST_MULTIPLIER,
+    "intrinsic_value_multiplier": INTRINSIC_VALUE_MULTIPLIER,
+    "quality_classes": SOLUTION_QUALITY_CLASSES,
+    "quality_class_bounds": SOLUTION_QUALITY_CLASS_BOUNDS,
+    "quality_class_count": SOLUTION_QUALITY_CLASS_COUNT
 }
 
 simulations = utils.load("problems/50-tsp/simulations.json")
@@ -35,7 +35,7 @@ profile_4 = performance.get_probabilistic_performance_profile(simulations, CONFI
 heuristic = tsp.get_mst_distance(start_state, states)
 quality_estimator = lambda cost: heuristic / cost
 
-# true_qualities = simulations['instance-30']['qualities']
+# true_qualities = simulations["instance-30"]["qualities"]
 # intrinsic_values = computation.get_intrinsic_value(true_qualities, INTRINSIC_VALUE_MULTIPLIER) - computation.get_time_cost(range(len(true_qualities)), TIME_COST_MULTIPLIER)
 # optimal_stopping_point = computation.get_optimal_stopping_point(intrinsic_values)
 # print(optimal_stopping_point)

@@ -1,7 +1,9 @@
+import json
 import os
+
+import computation
 import monitor
 import tsp
-import json
 
 
 def get_optimal_costs(file_path):
@@ -17,7 +19,7 @@ def get_simulations(instances_directory, index_file_path):
 
     for file in os.listdir(instances_directory):
         if file.endswith(".tsp"):
-            print("Handling %s" % file)
+            print("Handling %s..." % file)
 
             instance = os.path.splitext(file)[0]
             file_path = os.path.join(instances_directory, file)
@@ -26,10 +28,10 @@ def get_simulations(instances_directory, index_file_path):
             costs = monitor.recorder(tsp.k_opt_solve, states, start_state, 1000)
 
             optimal_cost = optimal_costs[instance]
-            qualities = [optimal_cost / cost for cost in costs]
+            qualities = computation.get_solution_qualities(costs, optimal_cost)
 
             heuristic_cost = tsp.get_mst_distance(start_state, states)
-            estimated_qualities = [heuristic_cost / cost for cost in costs]
+            estimated_qualities = computation.get_solution_qualities(costs, heuristic_cost)
 
             performances[instance] = {
                 "qualities": qualities,

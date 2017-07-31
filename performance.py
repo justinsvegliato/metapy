@@ -12,23 +12,23 @@ def get_initial_probabilistic_performance_profile(count, steps):
 
 
 def get_probabilistic_performance_profile(instances, config):
-    groups = utils.get_groups(instances, 'qualities')
+    groups = utils.get_groups(instances, "qualities")
 
     length = utils.get_max_list_length(groups)
     steps = range(length)
 
     trimmed_groups = utils.get_trimmed_lists(groups, length)
 
-    profile = get_initial_probabilistic_performance_profile(config['quality_class_count'], steps)
+    profile = get_initial_probabilistic_performance_profile(config["quality_class_count"], steps)
 
     for step in steps:
         for qualities in trimmed_groups:
             target_quality = qualities[step]
-            target_class = utils.digitize(target_quality, config['quality_class_bounds'])
+            target_class = utils.digitize(target_quality, config["quality_class_bounds"])
             profile[step][target_class] += 1
 
         normalizer = sum(profile[step])
-        for target_class in config['quality_classes']:
+        for target_class in config["quality_classes"]:
             profile[step][target_class] /= normalizer
 
     return profile
@@ -50,12 +50,8 @@ def get_normalized_performance_profile(profile, classes, steps):
 
 
 def get_dynamic_performance_profile(simulations, config, selector):
-    classes = config['quality_classes']
-    bounds = config['quality_class_bounds']
-    count = config['quality_class_count']
-
-    groups = utils.get_groups(simulations, 'qualities')
-    estimated_groups = utils.get_groups(simulations, 'estimated_qualities')
+    groups = utils.get_groups(simulations, "qualities")
+    estimated_groups = utils.get_groups(simulations, "estimated_qualities")
 
     length = utils.get_max_list_length(groups)
     steps = range(length)
@@ -63,7 +59,7 @@ def get_dynamic_performance_profile(simulations, config, selector):
     trimmed_groups = utils.get_trimmed_lists(groups, length)
     trimmed_estimated_groups = utils.get_trimmed_lists(estimated_groups, length)
 
-    profile = get_initial_dynamic_performance_profile(classes, count, steps)
+    profile = get_initial_dynamic_performance_profile(config["quality_classes"], config["quality_class_count"], steps)
 
     for i, _ in enumerate(trimmed_groups):
         qualities = trimmed_groups[i]
@@ -73,9 +69,9 @@ def get_dynamic_performance_profile(simulations, config, selector):
             if step + 1 < length:
                 origin_quality, target_quality = selector(qualities, estimated_qualities, step)
                 
-                origin_class = utils.digitize(origin_quality, bounds)
-                target_class = utils.digitize(target_quality, bounds)
+                origin_class = utils.digitize(origin_quality, config["quality_class_bounds"])
+                target_class = utils.digitize(target_quality, config["quality_class_bounds"])
                 profile[origin_class][step][target_class] += 1
 
 
-    return get_normalized_performance_profile(profile, classes, steps)
+    return get_normalized_performance_profile(profile, config["quality_classes"], steps)
