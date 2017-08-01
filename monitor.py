@@ -10,7 +10,7 @@ import tsp
 import utils
 import numpy as np
 
-SLEEP_INTERVAL = 0.5
+SLEEP_INTERVAL = 0.1
 
 
 def recorder(algorithm, *args):

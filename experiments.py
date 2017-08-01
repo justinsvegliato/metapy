@@ -172,7 +172,9 @@ def experiment_1(simulations_file, instances_directory):
 
 
 def main():
-    experiment_1("problems/50-tsp/simulations.json", "problems/50-tsp")
+    # experiment_1("problems/50-tsp/simulations.json", "problems/50-tsp")
+    simulations = get_simulations("problems/20-120-tsp", "problems/test-tsp/optimal-costs.csv")
+    utils.save(simulations, "problems/test-tsp/test-simulations.json")
 
 
 main()
