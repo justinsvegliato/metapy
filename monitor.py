@@ -15,7 +15,7 @@ SLEEP_INTERVAL = 0.1
 
 def recorder(algorithm, *args):
     memory = Manager().dict()
-    memory["cost"] = None
+    memory["cost"] = float("inf")
     args += (memory,)
 
     process = Process(target=algorithm, args=args)
