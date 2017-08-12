@@ -3,6 +3,7 @@ import os
 import computation
 import monitor
 import tsp
+import utils
 
 ITERATIONS = 2000
 
@@ -43,11 +44,11 @@ def get_simulations(instances_directory, index_file_path):
 
 
 def main():
-    # simulations = get_simulations("problems/20-120-tsp", "problems/test-tsp/optimal-costs.csv")
-    # utils.save(simulations, "problems/test-tsp/test-simulations.json")
+    simulations = get_simulations("problems/80-tsp", "problems/80-tsp/instances.csv")
+    utils.save(simulations, "simulations/80-tsp-0.1s.json")
 
-    for i in range(50):
-        cities = tsp.get_instance(80, 0, 10000, 1)
-        tsp.save_instance('problems/80-tsp/instance-%d.tsp' % i, cities)
+    # for i in range(50):
+    #     cities = tsp.get_instance(80, 0, 10000, 1)
+    #     tsp.save_instance('problems/80-tsp/instance-%d.tsp' % i, cities)
 
 main()

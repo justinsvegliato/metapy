@@ -10,7 +10,7 @@ import tsp
 import utils
 import numpy as np
 
-SLEEP_INTERVAL = 0.1
+INTERVAL = 0.1
 
 
 def recorder(algorithm, *args):
@@ -20,12 +20,12 @@ def recorder(algorithm, *args):
 
     process = Process(target=algorithm, args=args)
     process.start()
-    time.sleep(SLEEP_INTERVAL)
+    time.sleep(INTERVAL)
 
     costs = []
     while process.is_alive():
         costs.append(memory["cost"])
-        time.sleep(SLEEP_INTERVAL)
+        time.sleep(INTERVAL)
 
     return costs
 
@@ -42,7 +42,7 @@ def fixed_monitor(algorithm, quality_estimator, profile_4, config, *args):
 
     process = Process(target=algorithm, args=args)
     process.start()
-    time.sleep(SLEEP_INTERVAL)
+    time.sleep(INTERVAL)
 
     while process.is_alive():
         quality = quality_estimator(memory["cost"])
@@ -57,7 +57,7 @@ def fixed_monitor(algorithm, quality_estimator, profile_4, config, *args):
             break
 
         step += 1
-        time.sleep(SLEEP_INTERVAL)
+        time.sleep(INTERVAL)
 
     return memory["solution"], records
 
@@ -73,7 +73,7 @@ def myopic_monitor(algorithm, quality_estimator, profile_1, profile_3, config, *
 
     process = Process(target=algorithm, args=args)
     process.start()
-    time.sleep(SLEEP_INTERVAL)
+    time.sleep(INTERVAL)
 
     while process.is_alive():
         quality = quality_estimator(memory["cost"])
@@ -89,7 +89,7 @@ def myopic_monitor(algorithm, quality_estimator, profile_1, profile_3, config, *
             break
 
         step += 1
-        time.sleep(SLEEP_INTERVAL)
+        time.sleep(INTERVAL)
 
     return memory["solution"], records
 
@@ -106,7 +106,7 @@ def nonmyopic_monitor(algorithm, quality_estimator, profile_2, profile_3, config
 
     process = Process(target=algorithm, args=args)
     process.start()
-    time.sleep(SLEEP_INTERVAL)
+    time.sleep(INTERVAL)
 
     while process.is_alive():
         quality = quality_estimator(memory["cost"])
@@ -122,7 +122,7 @@ def nonmyopic_monitor(algorithm, quality_estimator, profile_2, profile_3, config
             break
 
         step += 1
-        time.sleep(SLEEP_INTERVAL)
+        time.sleep(INTERVAL)
 
     return memory["solution"], records
 
@@ -139,7 +139,7 @@ def projected_monitor(algorithm, quality_estimator, config, *args):
 
     process = Process(target=algorithm, args=args)
     process.start()
-    time.sleep(SLEEP_INTERVAL)
+    time.sleep(INTERVAL)
 
     while process.is_alive():
         quality = quality_estimator(memory["cost"])
@@ -166,6 +166,6 @@ def projected_monitor(algorithm, quality_estimator, config, *args):
                 pass
 
         step += 1
-        time.sleep(SLEEP_INTERVAL)
+        time.sleep(INTERVAL)
 
     return memory["solution"], records
