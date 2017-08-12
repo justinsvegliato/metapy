@@ -158,7 +158,7 @@ def get_instance(size, start_position, end_position, minimum_distance):
     return cities
 
 
-def save_instance(name, comment, cities):
+def save_instance(name, cities):
     size = len(cities)
 
     node_coord_section = ""
@@ -167,7 +167,7 @@ def save_instance(name, comment, cities):
         delimiter = DELIMITER if i < size - 1 else ""
         node_coord_section += CITY_TEMPLATE % (i + 1, x, y, delimiter)
 
-    instance = FILE_TEMPLATE % (name, comment, size, node_coord_section)
+    instance = FILE_TEMPLATE % (name, COMMENT, size, node_coord_section)
 
     f = open(name, "w")
     f.write(instance)
