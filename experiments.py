@@ -44,11 +44,11 @@ def get_simulations(instances_directory, index_file_path):
 
 
 def main():
-    simulations = get_simulations("problems/80-tsp", "problems/80-tsp/instances.csv")
-    utils.save(simulations, "simulations/80-tsp-0.1s.json")
+    # simulations = get_simulations("problems/80-tsp", "problems/80-tsp/instances.csv")
+    # utils.save(simulations, "simulations/80-tsp-0.1s.json")
 
-    # for i in range(50):
-    #     cities = tsp.get_instance(80, 0, 10000, 1)
-    #     tsp.save_instance('problems/80-tsp/instance-%d.tsp' % i, cities)
+    for i in range(50):
+        cities = tsp.get_instance(100, 0, 10000, 1)
+        tsp.save_instance('problems/100-tsp/instance-%d.tsp' % i, cities)
 
 main()
