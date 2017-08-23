@@ -10,7 +10,7 @@ import tsp
 import utils
 import numpy as np
 
-INTERVAL = 0.1
+INTERVAL = 0.001
 
 
 def recorder(algorithm, *args):
