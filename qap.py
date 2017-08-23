@@ -3,8 +3,8 @@ import random
 import matplotlib.pyplot as plt
 
 
-def get_random_matrix(size):
-    return np.random.rand(size, size)
+def get_random_matrix(rows, columns):
+    return np.random.rand(rows, columns)
 
 
 def get_random_assignment(size):
@@ -12,58 +12,63 @@ def get_random_assignment(size):
 
 
 def get_next_assignment(assignment):
-    mutated_assignment = list(assignment)
-    first_location, second_location = np.random.choice(range(len(assignment)), size=2, replace=False)
-    mutated_assignment[first_location], mutated_assignment[second_location] = mutated_assignment[second_location], mutated_assignment[first_location]
-    return mutated_assignment
+    choices = range(len(assignment))
+    first_variable, second_variable = np.random.choice(choices, size=2, replace=False)
+
+    next_assignment = list(assignment)
+    next_assignment[first_variable], next_assignment[second_variable] = next_assignment[second_variable], next_assignment[first_variable]
+    
+    return next_assignment
 
 
-def get_cost(weights, distances, location_id, facility_id):
-    return weights[location_id][facility_id] * distances[location_id][facility_id]
+def get_cost(assignment, weights, distances):
+    return np.sum([weights[variable][value] * distances[variable][value] for variable, value in enumerate(assignment)])
 
 
-def get_total_cost(assignment, weights, distances):
-    return np.sum([get_cost(weights, distances, location_id, facility_id) for location_id, facility_id in enumerate(assignment)])
-
-
-def simulated_annealing(size, weights, distances):
+def anytime_simulated_annealing(size, weights, distances, temperature=1, cooling_rate=0.0001):
     assignment = get_random_assignment(size)
-    best_assignment = assignment    
-    temperature = 1
-    assignments = []
+
+    best_assignment = assignment 
+    best_assignments = [best_assignment]
 
     while temperature > 0:
         next_assignment = get_next_assignment(assignment)
 
-        cost = get_total_cost(assignment, weights, distances)
-        next_cost = get_total_cost(next_assignment, weights, distances)
+        cost = get_cost(assignment, weights, distances)
+        next_cost = get_cost(next_assignment, weights, distances)
         energy_change = cost - next_cost
 
         if min(1, np.exp(energy_change / temperature)) >= random.random():
-        # if energy_change > 0 or np.exp(energy_change / temperature) >= random.random():
             assignment = next_assignment
 
-            best_cost = get_total_cost(best_assignment, weights, distances)
-            assignments.append(best_assignment)
+            best_cost = get_cost(best_assignment, weights, distances)
             if best_cost > next_cost:
                 best_assignment = next_assignment
-        temperature -= 0.0001
+
+            best_assignments.append(best_assignment)
+
+        temperature -= cooling_rate
             
-    return assignments
+    return best_assignments
 
 
-size = 1000
-# size = 10000
-weights = np.ones((size, size)) #get_random_matrix(size)
-distances = get_random_matrix(size)
+def main():
+    size = 1000
 
-assignments = simulated_annealing(size, weights, distances)
-qualities = [1 / get_total_cost(assignment, weights, distances) for assignment in assignments]
+    weights = get_random_matrix(size, size)
+    distances = get_random_matrix(size, size)
 
-plt.figure()
-plt.xlabel('Time')
-plt.ylabel('Cost')
-plt.plot(range(len(assignments)), qualities)
-plt.show()
+    best_assignments = anytime_simulated_annealing(size, weights, distances)
+    qualities = [get_cost(assignment, weights, distances) for assignment in best_assignments]
+
+    plt.figure()
+    plt.xlabel('Time')
+    plt.ylabel('Solution Quality')
+    plt.plot(range(len(best_assignments)), qualities)
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
 
 
