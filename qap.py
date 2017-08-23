@@ -52,7 +52,7 @@ def simulated_annealing(size, weights, distances):
     return assignments
 
 
-# size = 1000
+size = 1000
 # size = 10000
 weights = np.ones((size, size)) #get_random_matrix(size)
 distances = get_random_matrix(size)
