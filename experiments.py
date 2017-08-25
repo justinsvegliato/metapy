@@ -58,6 +58,7 @@ def get_qap_simulations(instances_directory, lower_bound_path):
             estimated_qualities = computation.get_solution_qualities(costs, lower_bound)
 
             performances[instance] = {
+                "qualities": estimated_qualities,
                 "estimated_qualities": estimated_qualities
             }
 
@@ -81,15 +82,12 @@ def main():
     #     cities = tsp.get_instance(100, 0, 10000, 1)
     #     tsp.save_instance('problems/100-tsp/instance-%d.tsp' % i, cities)
 
-    # simulations = get_qap_simulations("problems/200-qap/results", "problems/200-qap/lower-bounds.csv")
-    # utils.save(simulations, "simulations/200-qap.json")
-
-    simulations = get_adapted_qap_simulations('simulations/200-qap.json')
-    utils.save(simulations, "simulations/200-qap.json")
+    simulations = get_qap_simulations("problems/50-qap", "problems/50-qap/lower-bounds.csv")
+    utils.save(simulations, "simulations/50-qap.json")
 
     # for i in range(50):
-    #     size, weight_matrix, distance_matrix = qap.generate_instance(200)
-    #     qap.save_instance('problems/200-qa/instance-%d.dat' % i, size, weight_matrix, distance_matrix)
+    #     size, weight_matrix, distance_matrix = qap.generate_instance(50)
+    #     qap.save_instance('problems/50-qap/instance-%d.dat' % i, size, weight_matrix, distance_matrix)
 
 
 if __name__ == '__main__':
