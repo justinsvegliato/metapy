@@ -64,6 +64,15 @@ def get_qap_simulations(instances_directory, lower_bound_path):
     return performances
 
 
+def get_adapted_qap_simulations(simulation_path):
+    simulations = utils.load(simulation_path)
+
+    for key in simulations:
+        simulations[key]['qualities'] = simulations[key]['estimated_qualities']
+
+    return simulations
+
+
 def main():
     # simulations = get_tsp_simulations("problems/100-tsp", "problems/100-tsp/instances.csv")
     # utils.save(simulations, "simulations/100-tsp-0.1s.json")
@@ -72,7 +81,10 @@ def main():
     #     cities = tsp.get_instance(100, 0, 10000, 1)
     #     tsp.save_instance('problems/100-tsp/instance-%d.tsp' % i, cities)
 
-    simulations = get_qap_simulations("problems/200-qap/results", "problems/200-qap/lower-bounds.csv")
+    # simulations = get_qap_simulations("problems/200-qap/results", "problems/200-qap/lower-bounds.csv")
+    # utils.save(simulations, "simulations/200-qap.json")
+
+    simulations = get_adapted_qap_simulations('simulations/200-qap.json')
     utils.save(simulations, "simulations/200-qap.json")
 
     # for i in range(50):
