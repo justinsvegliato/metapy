@@ -1,24 +1,22 @@
-import numpy as np
-import random
-import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-import monitor
 import itertools
-import experiments
-import os
+import random
+import re
+
+import numpy as np
+
 
 def load_instance(filename):
     with open(filename) as f:
         lines = f.readlines()
 
         size = int(lines[0])
-        
+
         weights = ''
         for i in range(2, size + 2):
             weights += lines[i].strip()
             if i < size + 1:
                 weights += ';'
-        
+
         distances = ''
         for i in range(size + 3, 2 * size + 3):
             distances += lines[i].strip()
@@ -26,6 +24,33 @@ def load_instance(filename):
                 distances += ';'
 
         return size, np.matrix(weights), np.matrix(distances)
+
+
+def generate_instance(size):
+    np.set_printoptions(threshold=np.nan)
+
+    weights = np.random.random_integers(0, 10, size=(size, size))
+    weight_matrix = weights + weights.T
+    np.fill_diagonal(weight_matrix, 0)
+
+    distances = np.random.random_integers(0, 10, size=(size, size))
+    distance_matrix = distances + distances.T
+    np.fill_diagonal(distance_matrix, 0)
+
+    return size, weight_matrix, distance_matrix
+
+
+def save_instance(filename, size, weight_matrix, distance_matrix):
+    instance = str(size)
+
+    weight_matrix_string = re.sub(r'[\[\]]', '', np.array_str(weight_matrix, max_line_width=10000))
+    distance_matrix_string = re.sub(r'[\[\]]', '', np.array_str(distance_matrix, max_line_width=10000))
+
+    instance += '\n\n' + weight_matrix_string + '\n\n' + distance_matrix_string
+
+    f = open(filename, 'w')
+    f.write(instance)
+    f.close()
 
 
 def get_random_matrix(rows, columns):
@@ -42,7 +67,7 @@ def get_next_assignment(assignment):
 
     next_assignment = list(assignment)
     next_assignment[first_variable], next_assignment[second_variable] = next_assignment[second_variable], next_assignment[first_variable]
-    
+
     return next_assignment
 
 
@@ -80,46 +105,3 @@ def anytime_simulated_annealing(size, weights, distances, memory, temperature=1,
         temperature -= cooling_rate
             
     return best_assignments
-
-
-def main():
-
-    # model = lambda x, a, b, c: a * np.arctan(x + b) + c
-
-    plt.figure()
-    plt.xlabel('Time')
-    plt.ylabel('Solution Quality')
-
-    source = 'problems/10-19-qap/'
-    for filename in os.listdir(source):
-        if filename.endswith(".dat"):
-            file_path = os.path.join(source, filename)
-
-            instance = os.path.splitext(filename)[0]
-            bounds = experiments.get_optimal_costs('problems/lower-bounds.csv')
-
-            size, weights, distances = load_instance(file_path)
-            costs = monitor.recorder(anytime_simulated_annealing, size, weights, distances)
-
-            qualities = [bounds[instance] / cost for cost in costs]
-            plt.plot(range(len(qualities)), qualities)
-
-    # steps = range(len(qualities))
-
-    # axes = plt.gca()
-    # axes.set_ylim([0, 1])
-
-    # for end in steps[5:]:
-    #     try:
-    #         params, _ = curve_fit(model, steps[:end], qualities[:end])
-    #         projection = model(steps, params[0], params[1], params[2])
-    #         plt.plot(steps, projection)
-    #     except:
-    #         pass
-
-    plt.show()
-
-
-if __name__ == '__main__':
-    main()
-

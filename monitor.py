@@ -114,8 +114,6 @@ def nonmyopic_monitor(algorithm, quality_estimator, profile_2, profile_3, config
         record = {"t": step, "q": quality}
         records.append(record)
 
-        print(record)
-
         action = computation.get_optimal_action(quality, step, values, profile_2, profile_3, config)
         if action == computation.STOP_SYMBOL:
             process.terminate()
@@ -147,8 +145,6 @@ def projected_monitor(algorithm, quality_estimator, config, *args):
 
         record = {"t": step, "q": quality}
         records.append(record)
-
-        print(record)
 
         if step >= 10:
             try:
