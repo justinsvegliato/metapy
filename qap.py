@@ -76,7 +76,7 @@ def get_cost(assignment, weights, distances):
     return np.sum([weights[loc_1, loc_2] * distances[assignment[loc_1], assignment[loc_2]] for loc_1, loc_2 in pairs])
 
 
-def anytime_simulated_annealing(size, weights, distances, memory, temperature=1, cooling_rate=0.0001):
+def anytime_simulated_annealing(size, weights, distances, temperature=1, cooling_rate=0.0001):
     assignment = get_random_assignment(size)
 
     best_assignment = assignment 
@@ -99,9 +99,6 @@ def anytime_simulated_annealing(size, weights, distances, memory, temperature=1,
 
             best_assignments.append(best_assignment)
 
-            memory["solution"] = best_assignment
-            memory["cost"] = get_cost(best_assignment, weights, distances)
-
         temperature -= cooling_rate
-            
+
     return best_assignments

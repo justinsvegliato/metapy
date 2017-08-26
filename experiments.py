@@ -4,6 +4,7 @@ import computation
 import monitor
 import qap
 import tsp
+import jsp
 import utils
 
 ITERATIONS = 2000
@@ -82,12 +83,20 @@ def main():
     #     cities = tsp.get_instance(100, 0, 10000, 1)
     #     tsp.save_instance('problems/100-tsp/instance-%d.tsp' % i, cities)
 
-    simulations = get_qap_simulations("problems/50-qap", "problems/50-qap/lower-bounds.csv")
-    utils.save(simulations, "simulations/50-qap.json")
+    # simulations = get_qap_simulations("problems/50-qap", "problems/50-qap/lower-bounds.csv")
+    # utils.save(simulations, "simulations/50-qap.json")
 
     # for i in range(50):
     #     size, weight_matrix, distance_matrix = qap.generate_instance(50)
     #     qap.save_instance('problems/50-qap/instance-%d.dat' % i, size, weight_matrix, distance_matrix)
+
+    # for i in range(50):
+    #     instance = jsp.generate_instance(10, 10, 100)
+    #     f = open('problems/10-10-100-jsp/instance-%d.txt' % i, 'w')
+    #     f.write(instance)
+    #     f.close()
+
+
 
 
 if __name__ == '__main__':
