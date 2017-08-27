@@ -6,6 +6,7 @@ import qap
 import tsp
 import jsp
 import utils
+import matplotlib.pyplot as plt
 
 ITERATIONS = 2000
 
@@ -66,6 +67,34 @@ def get_qap_simulations(instances_directory, lower_bound_path):
     return performances
 
 
+def get_jsp_simulations(instances_directory):
+    performances = {}
+
+    for file in os.listdir(instances_directory):
+        if file.endswith('.results'):
+            print("Handling %s..." % file)
+
+            instance = os.path.splitext(file)[0].split('.')[0]
+            file_path = os.path.join(instances_directory, file)
+
+            whatever_file_path = os.path.join(instances_directory, os.path.splitext(file)[0])
+            real_instance = jsp.load_instance(whatever_file_path)
+            lower_bound = jsp.get_lower_bound(real_instance)
+
+            f = open(file_path)
+            costs = [float(line.strip()) for line in f.readlines()]
+            f.close()
+
+            estimated_qualities = computation.get_solution_qualities(costs, lower_bound)
+
+            performances[instance] = {
+                "qualities": estimated_qualities,
+                "estimated_qualities": estimated_qualities
+            }
+
+    return performances
+
+
 def get_adapted_qap_simulations(simulation_path):
     simulations = utils.load(simulation_path)
 
@@ -91,11 +120,26 @@ def main():
     #     qap.save_instance('problems/50-qap/instance-%d.dat' % i, size, weight_matrix, distance_matrix)
 
     # for i in range(50):
-    #     instance = jsp.generate_instance(10, 10, 100)
-    #     f = open('problems/10-10-100-jsp/instance-%d.txt' % i, 'w')
+    #     instance = jsp.generate_instance(10, 10, 50)
+    #     f = open('problems/10-10-30-jsp/instance-%d.txt' % i, 'w')
     #     f.write(instance)
     #     f.close()
 
+    # for file in os.listdir('problems/10-10-50-jsp'):
+    #     if file.endswith('.results'):
+    #         plt.figure()
+    #         plt.title('Performance Profile')
+    #         plt.xlabel('Time')
+    #         plt.ylabel('Quality')
+
+    #         file_path = os.path.join('problems/10-10-50-jsp', file)
+    #         lines = open(file_path).readlines()
+    #         qualities = [float(line) for line in lines]
+    #         plt.scatter(range(len(qualities)), qualities)
+    #         plt.show()
+
+    simulations = get_jsp_simulations('problems/10-10-60-jsp')
+    utils.save(simulations, "simulations/10-10-60-jsp.json")
 
 
 

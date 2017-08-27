@@ -3,7 +3,7 @@ from sys import argv
 
 SEED = 0
 PS = 500
-IT = 1000
+IT = 600
 CP = 0.9
 MP = 0.1
 ELITE = int(0.05 * PS)
@@ -163,4 +163,3 @@ def Genetic(I, ps = PS, pc = CP, pm = MP, mit = IT):
 
 I = LoadInstance(argv[-1])
 (ts, g) = Genetic(I, ps=PS, mit=IT, pc=CP, pm=MP)
-C = ComputeStartTimes(g, I)

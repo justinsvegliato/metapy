@@ -41,7 +41,6 @@ def load_instance(filename):
 
         jobs = []
         for line in lines[1:]:
-            print(line)
             entries = [int(entry) for entry in line.strip().split(' ')]
             jobs.append([{'machine_id': entries[i], 'duration': entries[i + 1]} for i in range(1, len(entries), 2)])
 
